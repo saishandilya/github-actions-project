@@ -6,7 +6,7 @@ on:
 
 jobs:
   compile:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
     - name: Checkout Project Code
       uses: actions/checkout@v4
@@ -22,7 +22,7 @@ jobs:
       run: mvn compile
 
   security_check:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: compile
     steps:
     - name: Checkout Project Code
@@ -31,7 +31,7 @@ jobs:
         fetch-depth: 0
       
     - name: Trivy File System Scan
-      uses: aquasecurity/trivy-action@v0.32.0
+      uses: aquasecurity/trivy-action@v0.30.0
       with:
         scan-type: fs
         scan-ref: .
