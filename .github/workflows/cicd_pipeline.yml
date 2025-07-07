@@ -19,4 +19,32 @@ jobs:
         cache: maven
         
     - name: Build with Maven
-      run: mvn --version
+      run: mvn compile
+
+  security_check:
+    runs-on: ubuntu-latest
+    needs: compile
+    steps:
+    - name: Checkout Project Code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+      
+    - name: Trivy File System Scan
+      uses: aquasecurity/trivy-action@v0.32.0
+      with:
+        scan-type: fs
+        scan-ref: .
+        format: table
+        output: fs-report.json
+        severity: HIGH,CRITICAL
+        exit-code: 0
+
+    - name: Scan for Secrets with Gitleaks
+      uses: gitleaks/gitleaks-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        format: json
+        output: gitleaks-report.json
+        redact: true
