@@ -149,7 +149,7 @@ jobs:
       - name: Build and Push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./github-actions-project
           push: true
           tags: saishandilya/bankapp:latest
           file: ./Dockerfile
