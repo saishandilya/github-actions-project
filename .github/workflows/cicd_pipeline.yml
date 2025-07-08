@@ -153,3 +153,23 @@ jobs:
           push: true
           tags: saishandilya/bankapp:latest
           file: ./Dockerfile
+
+  deploy_to_kubernates:
+    runs-on: self-hosted
+    needs: docker_build_image_and_push_to_dockerhub
+    steps: 
+      - name: Checkout Project Code
+        uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: latest
+          
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.EKS_KUBECONFIG }}" > $HOME/.kube/config
+      - name: Deploy to EKS
+        run: |
+          kubectl apply -f deployment.yml
